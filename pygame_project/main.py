@@ -55,7 +55,7 @@ ball_images = [
     pygame.image.load(os.path.join(image_path,"ball4.png"))
 ]
 # 공 크기에 따른 최초스피드
-ball_speed_y = [-18, -15, -12, -9] # index 0,1,2,3 값
+ball_speed_y = [-18, -15, -12, -10] # index 0,1,2,3 값
 # 공 
 balls = []
 
@@ -73,6 +73,12 @@ balls.append({
 weapon_to_remove = -1
 ball_to_remove = -1
 
+# 폰트
+game_font = pygame.font.Font(None,40)
+total_time = 30
+game_result = "fuck..."
+start_ticks = pygame.time.get_ticks()
+
 ############################
 
 
@@ -85,7 +91,7 @@ while running :
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
+            
         if event.type == pygame.KEYDOWN :
             if event.key == pygame.K_LEFT:
                 character_to_x -= character_speed
@@ -178,26 +184,26 @@ while running :
                     small_ball_width = small_ball_rect.size[0]
                     small_ball_height = small_ball_rect.size[1]
 
-                # 왼쪽 공
-                balls.append({
-                        "pos_x" : ball_pos_x + (ball_width/2) - small_ball_width/2, # 공의 x좌표
-                        "pos_y" : ball_pos_y + (ball_height/2) - small_ball_height/2, # 공의 x좌표
-                        "img_idx" : ball_img_idx + 1, #공의 이미지 인덱스
-                        "to_x" : -3, # x축 이동방향
-                        "to_y" : -6, # y축 이동방향
-                        "init_spd_y" : ball_speed_y[ball_img_idx + 1] # y 최초 속도
-                    })
-                # 오른쪽 공
-                balls.append({
-                        "pos_x" : ball_pos_x + (ball_width/2) - small_ball_width/2, # 공의 x좌표
-                        "pos_y" : ball_pos_y + (ball_height/2) - small_ball_height/2, # 공의 x좌표
-                        "img_idx" : ball_img_idx + 1, #공의 이미지 인덱스
-                        "to_x" : 3, # x축 이동방향
-                        "to_y" : -6, # y축 이동방향
-                        "init_spd_y" : ball_speed_y[ball_img_idx + 1] # y 최초 속도
-                    })
+                     # 왼쪽 공
+                    balls.append({
+                            "pos_x" : ball_pos_x + (ball_width/2) - small_ball_width/2, # 공의 x좌표
+                            "pos_y" : ball_pos_y + (ball_height/2) - small_ball_height/2, # 공의 x좌표
+                            "img_idx" : ball_img_idx + 1, #공의 이미지 인덱스
+                            "to_x" : -3, # x축 이동방향
+                            "to_y" : -6, # y축 이동방향
+                            "init_spd_y" : ball_speed_y[ball_img_idx + 1] # y 최초 속도
+                        })
+                    # 오른쪽 공
+                    balls.append({
+                            "pos_x" : ball_pos_x + (ball_width/2) - small_ball_width/2, # 공의 x좌표
+                            "pos_y" : ball_pos_y + (ball_height/2) - small_ball_height/2, # 공의 x좌표
+                            "img_idx" : ball_img_idx + 1, #공의 이미지 인덱스
+                            "to_x" : 3, # x축 이동방향
+                            "to_y" : -6, # y축 이동방향
+                            "init_spd_y" : ball_speed_y[ball_img_idx + 1] # y 최초 속도
+                        })
 
-                break
+                    break
         
     #충돌된 공 이랑 무기 없앰
     if ball_to_remove > -1:
@@ -208,6 +214,10 @@ while running :
         del weapons[weapon_to_remove]
         weapon_to_remove = -1
 
+    # 모든 공을 없앤 경우 게임 종료 (성공)
+    if len(balls) == 0 :
+        game_result = "yes..."
+        running = False
 
 
     screen.blit(background,(0,0))
@@ -223,7 +233,24 @@ while running :
     screen.blit(stage,(0,screen_height-stage_height))
     screen.blit(character,(character_x_pos,character_y_pos))
 
+    # 경과 시간
+    elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000
+    timer = game_font.render("Time : {}".format(int(total_time - elapsed_time)), True, (255,255,255))
+    screen.blit(timer, (10,10))
+
+    if total_time -elapsed_time <= 0:
+        game_result = "time..."
+        running = False
+
     pygame.display.update()
+
+
+msg = game_font.render(game_result, True, (0,0,0))
+msg_rect = msg.get_rect(center = (int(screen_width/2), int(screen_height/2)))
+screen.blit(msg,msg_rect)
+pygame.display.update()
+
+pygame.time.delay(2000)
 
 pygame.quit()
 
