@@ -11,7 +11,7 @@ screen_height = 480
 screen = pygame.display.set_mode((screen_width,screen_height))
 
 # 화면 타이틀
-pygame.display.set_caption("인생은 마치 튀어다니는 하나의 공")
+pygame.display.set_caption("C'set la vie")
 
 # FPS
 clock = pygame.time.Clock()
