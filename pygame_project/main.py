@@ -69,6 +69,10 @@ balls.append({
     "init_spd_y" : ball_speed_y[0] # y 최초 속도
 })
 
+# 사라질 무기, 공
+weapon_to_remove = -1
+ball_to_remove = -1
+
 ############################
 
 
@@ -119,15 +123,62 @@ while running :
         # 가로벽에 닿았을 때 공 이동 방향 변경
         if ball_pos_x < 0 or ball_pos_x > screen_width - ball_width :
             ball_val["to_x"] = ball_val["to_x"] * -1
+        
 
         # 튕기는 효과
         if ball_pos_y >= screen_height-stage_height - ball_height :
             ball_val["to_y"] = ball_val["init_spd_y"]
         else :
             ball_val["to_y"] += 0.5
-
+        
         ball_val["pos_x"] += ball_val["to_x"]
         ball_val["pos_y"] += ball_val["to_y"]
+
+    # 충돌처리
+    # 캐릭터 rect 정보 업데이트
+    character_rect = character.get_rect()
+    character_rect.left = character_x_pos
+    character_rect.top = character_y_pos
+
+    for ball_index, ball_val in enumerate(balls):
+        ball_pos_x = ball_val["pos_x"]
+        ball_pos_y = ball_val["pos_y"]
+        ball_img_idx = ball_val["img_idx"]
+        #공 rect
+        ball_rect = ball_images[ball_img_idx].get_rect()
+        ball_rect.left = ball_pos_x
+        ball_rect.top = ball_pos_y
+
+        # 공 - 캐릭 충돌
+        if character_rect.colliderect(ball_rect):
+            running = False
+            break
+
+        # 공 - 무기 충돌
+        for weapon_idx, weapon_val in enumerate(weapons):
+            weapon_pos_x = weapon_val[0]
+            weapon_pos_y = weapon_val[1]
+
+            # 무기 rect정보 업데이트
+            weapon_rect = weapon.get_rect()
+            weapon_rect.left = weapon_pos_x
+            weapon_rect.top = weapon_pos_y
+
+            if weapon_rect.colliderect(ball_rect):
+                weapon_to_remove = weapon_idx
+                ball_to_remove = ball_index
+                break
+        
+    #충돌된 공 이랑 무기 없앰
+    if ball_to_remove > -1:
+        del balls[ball_to_remove]
+        ball_to_remove = -1
+
+    if weapon_to_remove > -1:
+        del weapons[weapon_to_remove]
+        weapon_to_remove = -1
+
+
 
     screen.blit(background,(0,0))
     for weapon_x_pos, weapon_y_pos in weapons:
