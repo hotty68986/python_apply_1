@@ -167,6 +167,36 @@ while running :
             if weapon_rect.colliderect(ball_rect):
                 weapon_to_remove = weapon_idx
                 ball_to_remove = ball_index
+                
+                # 가장 작은 크기의 공이 아니라면 다음단계의 공으로 나눠주기
+                if ball_img_idx < 3 :
+                    # 현재 공 크기 정보
+                    ball_width = ball_rect.size[0]
+                    ball_height = ball_rect.size[1]
+                    # 나눠진 공 정보
+                    small_ball_rect = ball_images[ball_img_idx + 1].get_rect()
+                    small_ball_width = small_ball_rect.size[0]
+                    small_ball_height = small_ball_rect.size[1]
+
+                # 왼쪽 공
+                balls.append({
+                        "pos_x" : ball_pos_x + (ball_width/2) - small_ball_width/2, # 공의 x좌표
+                        "pos_y" : ball_pos_y + (ball_height/2) - small_ball_height/2, # 공의 x좌표
+                        "img_idx" : ball_img_idx + 1, #공의 이미지 인덱스
+                        "to_x" : -3, # x축 이동방향
+                        "to_y" : -6, # y축 이동방향
+                        "init_spd_y" : ball_speed_y[ball_img_idx + 1] # y 최초 속도
+                    })
+                # 오른쪽 공
+                balls.append({
+                        "pos_x" : ball_pos_x + (ball_width/2) - small_ball_width/2, # 공의 x좌표
+                        "pos_y" : ball_pos_y + (ball_height/2) - small_ball_height/2, # 공의 x좌표
+                        "img_idx" : ball_img_idx + 1, #공의 이미지 인덱스
+                        "to_x" : 3, # x축 이동방향
+                        "to_y" : -6, # y축 이동방향
+                        "init_spd_y" : ball_speed_y[ball_img_idx + 1] # y 최초 속도
+                    })
+
                 break
         
     #충돌된 공 이랑 무기 없앰
