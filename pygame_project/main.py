@@ -75,7 +75,7 @@ ball_to_remove = -1
 
 # 폰트
 game_font = pygame.font.Font(None,40)
-total_time = 30
+total_time = 20
 game_result = "fuck..."
 start_ticks = pygame.time.get_ticks()
 
@@ -170,6 +170,7 @@ while running :
             weapon_rect.left = weapon_pos_x
             weapon_rect.top = weapon_pos_y
 
+            #충돌
             if weapon_rect.colliderect(ball_rect):
                 weapon_to_remove = weapon_idx
                 ball_to_remove = ball_index
@@ -204,6 +205,10 @@ while running :
                         })
 
                     break
+        else : #계속 게임을 진행
+            continue
+        break # 안쪽 for문에서 break 를 만나면 여기로 진입
+
         
     #충돌된 공 이랑 무기 없앰
     if ball_to_remove > -1:
@@ -239,7 +244,7 @@ while running :
     screen.blit(timer, (10,10))
 
     if total_time -elapsed_time <= 0:
-        game_result = "time..."
+        game_result = "time.fuck..."
         running = False
 
     pygame.display.update()
